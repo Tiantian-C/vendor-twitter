@@ -21,6 +21,7 @@ resource "aws_iam_role_policy_attachment" "ec2_policy" {
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
+
 # policy 2 dynamodb and sqs
 data "aws_iam_policy_document" "twitter_service_access" {
     statement {
