@@ -1,3 +1,4 @@
+# actions
 name: "Build Twitter service"
 on:
   push:
@@ -5,9 +6,9 @@ on:
       - main
   pull_request:
 permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
+      id-token: write
+      contents: read
+      pull-requests: write 
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -36,15 +37,15 @@ jobs:
         with:
           repository: twitter
 
-      - name: Build,tag,and push image to ECR
+      - name: Build, tag, and push image to ECR
         id: build-image
-        env: AWS_IMAGE_TAG:${{github.sha}}
+        env:
+          AWS_IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t ${{steps.ecr.outputs.repository-uri}}:$AWS_IMAGE_TAG .
-          docker push ${{steps.ecr.outputs.repository-uri}}:$AWS_IMAGE_TAG
+          docker build -t ${{ steps.ecr.outputs.repository-uri }}:$AWS_IMAGE_TAG .
+          docker push ${{ steps.ecr.outputs.repository-uri }}:$AWS_IMAGE_TAG
 
-
-      - name: Setup Terraform
+      - name: Setup Terraform 
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.2.5
@@ -63,7 +64,7 @@ jobs:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
           AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: >
+        run: > 
           terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" 
           -backend-config="key=${AWS_BUCKET_KEY_NAME}" 
           -backend-config="region=${AWS_REGION}"
@@ -95,7 +96,7 @@ jobs:
             \`\`\`\n
             ${{ steps.validate.outputs.stdout }}
             \`\`\`
-
+ 
             </details>
 
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
@@ -129,5 +130,5 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
         env:
-          TF_VAR_image_tag: ${{github.sha}}
-          TF_VAR_repo_name: twitter
+          TF_VAR_image_tag: ${{ github.sha }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
