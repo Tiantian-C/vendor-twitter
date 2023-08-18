@@ -19,7 +19,7 @@ variable "aws_region" {}
 variable "app_name" {
   type        = string
   description = "Application Name"
-  default = "vendor-network"
+  default = "vendor"
 }
 
 variable "ecs_twitter_env_secrets_key" {
